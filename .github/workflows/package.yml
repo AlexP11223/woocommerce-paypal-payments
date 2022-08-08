@@ -42,7 +42,7 @@ jobs:
       id: filename
       env:
         FILE_PREFIX: ${{ github.event.inputs.filePrefix }}
-      run: echo '::set-output name=filename::$(${FILE_PREFIX})-woocommerce-paypal-payments'
+      run: echo "::set-output name=filename::${FILE_PREFIX}-woocommerce-paypal-payments"
 
     - name: Upload
       uses: actions/upload-artifact@v3
