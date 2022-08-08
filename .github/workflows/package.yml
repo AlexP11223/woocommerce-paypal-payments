@@ -37,5 +37,5 @@ jobs:
     - name: Upload
       uses: actions/upload-artifact@v3
       with:
-        name: woocommerce-paypal-payments
+        name: wcpp
         path: dist/
