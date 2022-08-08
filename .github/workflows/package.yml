@@ -15,6 +15,9 @@ on:
 jobs:
   package:
     runs-on: ubuntu-latest
+    
+    env:
+      FILENAME: woocommerce-paypal-payments
 
     name: Build package
     steps:
@@ -39,13 +42,13 @@ jobs:
       run: unzip woocommerce-paypal-payments.zip -d dist
 
     - name: Set file name
-      id: filename
       env:
         FILE_PREFIX: ${{ github.event.inputs.filePrefix }}
-      run: echo "::set-output name=filename::${FILE_PREFIX}-woocommerce-paypal-payments"
+      run: echo "FILENAME=$FILE_PREFIX-$FILENAME" >> $GITHUB_ENV
+      if: github.event.inputs.filePrefix
 
     - name: Upload
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ steps.filename.outputs.filename }}
+        name: ${{ env.FILENAME }}
         path: dist/
