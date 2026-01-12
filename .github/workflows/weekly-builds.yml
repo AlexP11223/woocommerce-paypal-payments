@@ -56,7 +56,7 @@ jobs:
               prerelease: true,
             });
 
-            core.setOutput('tag', latestTag);
+            core.setOutput('tag', weeklyTag);
             core.setOutput('release_id', release.data.id);
             core.setOutput('upload_url', release.data.upload_url);
 
