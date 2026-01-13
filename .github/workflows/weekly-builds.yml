@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 
 env:
-  SOURCE_REF: develop
+  SOURCE_REF: dev/develop
 
 jobs:
   create-tag:
