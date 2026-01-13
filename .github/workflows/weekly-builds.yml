@@ -12,8 +12,7 @@ jobs:
     permissions:
       contents: write
     outputs:
-      latest_tag: ${{ steps.create_release.outputs.tag }}
-      release_id: ${{ steps.create_release.outputs.release_id }}
+      weekly_tag: ${{ steps.create_release.outputs.weekly_tag }}
       release_upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Create weekly tag and release
@@ -34,7 +33,7 @@ jobs:
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const year = String(now.getFullYear());
-            const weeklyTag = `${latestTag}+${year}${month}${day}-weekly`;
+            const weeklyTag = `${latestTag}-alpha${year}${month}${day}`;
 
             const branchData = await github.rest.repos.getBranch({
               ...context.repo,
@@ -57,22 +56,21 @@ jobs:
               prerelease: true,
             });
 
-            core.setOutput('tag', weeklyTag);
-            core.setOutput('release_id', release.data.id);
+            core.setOutput('weekly_tag', weeklyTag);
             core.setOutput('upload_url', release.data.upload_url);
-
+            
   build:
     name: Build package
     needs: create-tag
-    uses: inpsyde/reusable-workflows/.github/workflows/build-plugin-archive.yml@a9af34f34e95cbe18703198c7e972e97ebcd7473
+    uses: inpsyde/reusable-workflows/.github/workflows/build-and-distribute.yml@main
+    secrets:
+      GITHUB_USER_EMAIL: ${{ secrets.DEPLOYBOT_EMAIL }}
+      GITHUB_USER_NAME: ${{ secrets.DEPLOYBOT_USER }}
+      GITHUB_USER_SSH_KEY: ${{ secrets.DEPLOYBOT_SSH_PRIVATE_KEY }}
+      GITHUB_USER_SSH_PUBLIC_KEY: ${{ secrets.DEPLOYBOT_SSH_PUBLIC_KEY }}
     with:
-      PHP_VERSION: 7.4
+      PACKAGE_VERSION: ${{ needs.create-tag.outputs.weekly_tag }}
       NODE_VERSION: 22
-      PLUGIN_MAIN_FILE: ./woocommerce-paypal-payments.php
-      PLUGIN_VERSION: ${{ needs.create-tag.outputs.latest_tag }}-weekly
-      PLUGIN_FOLDER_NAME: woocommerce-paypal-payments
-      ARCHIVE_NAME: woocommerce-paypal-payments
-      COMPILE_ASSETS_ARGS: '-vv --env=root'
 
   deploy:
     name: Upload weekly build
