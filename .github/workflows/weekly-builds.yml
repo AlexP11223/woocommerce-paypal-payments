@@ -80,13 +80,13 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: woocommerce-paypal-payments
+          name: woocommerce-paypal-payments-${{ needs.create-tag.outputs.weekly_tag }}
           path: ./artifacts
 
       - name: Create and upload zip file
         working-directory: ./artifacts
         run: |
-          zip -r ./woocommerce-paypal-payments-weekly.zip ./woocommerce-paypal-payments
+          zip -r ./woocommerce-paypal-payments-${{ needs.create-tag.outputs.weekly_tag }}.zip ./woocommerce-paypal-payments
 
       - name: Upload to release
         uses: actions/upload-release-asset@v1
@@ -94,6 +94,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-tag.outputs.release_upload_url }}
-          asset_path: ./artifacts/woocommerce-paypal-payments-weekly.zip
-          asset_name: woocommerce-paypal-payments-weekly.zip
+          asset_path: ./artifacts/woocommerce-paypal-payments-${{ needs.create-tag.outputs.weekly_tag }}.zip
+          asset_name: woocommerce-paypal-payments-${{ needs.create-tag.outputs.weekly_tag }}.zip
           asset_content_type: application/zip
