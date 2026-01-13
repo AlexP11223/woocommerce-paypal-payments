@@ -34,7 +34,7 @@ jobs:
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
             const year = String(now.getFullYear());
-            const weeklyTag = `${latestRelease}+${year}${month}${day}-weekly`;
+            const weeklyTag = `${latestTag}+${year}${month}${day}-weekly`;
 
             const branchData = await github.rest.repos.getBranch({
               ...context.repo,
